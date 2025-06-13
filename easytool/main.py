@@ -1,9 +1,7 @@
 # — coding: utf-8 –
 import openai
-import json
 import argparse
 import os
-from tqdm import tqdm
 from easytool import funcQA, restbench, toolbench_retrieve, toolbench
 from easytool.util import *
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -17,6 +15,15 @@ if __name__ == '__main__':
     parser.add_argument('--retrieval_num', type=int, default=5)
     
     args = parser.parse_args()
+
+    # Initialize variables to avoid unbound errors
+    dataset = None
+    Tool_dic = None
+    test_data = None
+    progress_file = ""
+    base_path = ""
+    index = None
+    dic_tool = {}
     
     if args.task == 'funcqa':
         dataset = read_json('data_funcqa/tool_instruction/functions_data.json')
@@ -38,7 +45,6 @@ if __name__ == '__main__':
     
     elif args.task == 'restbench':
         Tool_dic = read_json('data_restbench/tool_instruction/tmdb_tool.json')
-        dic_tool = {}
         for data in Tool_dic:
             dic_tool[data['ID']] = data
         test_data = read_json('data_restbench/test_data/tmdb.json')
@@ -46,7 +52,7 @@ if __name__ == '__main__':
 
     else:
         print("Wrong task name")
-        exit()  
+        exit()
         
     start_index = get_last_processed_index(progress_file)
     total_files = len(test_data)
