@@ -1,5 +1,8 @@
 import * as PlayHT from 'playht';
 import fs from 'fs';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 // Ensure required environment variables are set
 if (!process.env.PLAYHT_USER_ID || !process.env.PLAYHT_API_KEY) {
@@ -11,7 +14,7 @@ PlayHT.init({
   apiKey: process.env.PLAYHT_API_KEY,
 });
 
-async function streamAudio(text) {
+async function streamAudio(text: string) {
   // The text to generate audio for
   const stream = await PlayHT.stream(text, {
     voiceEngine: 'PlayDialog',

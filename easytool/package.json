@@ -1,0 +1,19 @@
+{
+  "name": "easytool",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">\r <img src=\"./assets/logo.png\" width=\"15%\"> <br>\r </p>",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/Untitled-1.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@types/node": "^24.0.1",
+    "dotenv": "^16.5.0",
+    "playht": "^0.21.0",
+    "typescript": "^5.8.3"
+  }
+}
