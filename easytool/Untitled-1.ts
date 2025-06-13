@@ -1,17 +1,39 @@
 import * as PlayHT from 'playht';
 import fs from 'fs';
 
+// Ensure required environment variables are set
+if (!process.env.PLAYHT_USER_ID || !process.env.PLAYHT_API_KEY) {
+  throw new Error('PLAYHT_USER_ID and PLAYHT_API_KEY must be set in your environment variables.');
+}
 // Initialize client
 PlayHT.init({
-  userId: '<BhNq6j9IUherUqiDzIwgIUFQWsO2>',
-  apiKey: '<ak-ad31510598bc4de59c71193f22edbf72>',
+  userId: process.env.PLAYHT_USER_ID,
+  apiKey: process.env.PLAYHT_API_KEY,
 });
 
 async function streamAudio(text) {
-  const stream = await PlayHT.stream('All human wisdom is summed up in these two words: Wait and hope.', { voiceEngine: 'PlayDialog' });
-  stream.on('data', (chunk) => {
-    // Do whatever you want with the stream, you could save it to a file, stream it in realtime to the browser or app, or to a telephony system
-    fs.appendFileSync('output.mp3', chunk);
+  // The text to generate audio for
+  const stream = await PlayHT.stream(text, {
+    voiceEngine: 'PlayDialog',
   });
-  return stream;
+
+  // Pipe the stream to a file
+  const fileStream = fs.createWriteStream('output.mp3');
+  stream.pipe(fileStream);
+
+  // Return a promise that resolves when the stream is finished
+  return new Promise<void>((resolve, reject) => {
+    stream.on('error', reject); // Handle errors from the source stream
+    fileStream.on('finish', resolve);
+    fileStream.on('error', reject);
+  });
 }
+
+// Call the function
+streamAudio('All human wisdom is summed up in these two words: Wait and hope.')
+  .then(() => {
+    console.log('Audio streaming finished.');
+  })
+  .catch((error) => {
+    console.error('Error streaming audio:', error);
+  });
